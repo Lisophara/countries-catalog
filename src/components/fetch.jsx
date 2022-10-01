@@ -103,7 +103,6 @@ function Fetch(page){
                                         <span>CCA2: {country.cca2}</span>
                                         <span>CCA3: {country.cca3}</span>
                                     </div>
-                                    {/* <p className="text-center">{typeof country.name.nativeName !== typeof undefined ? country.name.nativeName.official : null}</p> */}
                                     <div className="d-flex gap-4">
                                         <div>altSpellings</div>
                                         <div>
@@ -134,7 +133,25 @@ function Fetch(page){
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
-                                            <div><span className="fw-bold">Capital City:</span> {country.capital}</div>
+                                            <div><span className="fw-bold">Native Name: </span> 
+                                                {
+                                                    country.name.nativeName ? Object.keys(country.name.nativeName).map((key) => 
+                                                        <span>{country.name.nativeName[key].official}</span>
+                                                    ) : null
+                                                }
+                                            </div>
+                                            <div><span className="fw-bold">Capital City: </span> {country.capital}</div>
+                                            <div>
+                                                <span className="fw-bold">Languages: </span>
+                                                <span>
+                                                    {
+                                                        country.languages ? Object.keys(country.languages).map((lag, i, arrK) => 
+                                                            i === arrK.length - 1 ? country.languages[lag] : country.languages[lag] + ' - '
+                                                        )
+                                                        : null
+                                                    }
+                                                </span>
+                                            </div>
                                             <div className="d-flex gap-3">
                                                 <div className="fw-bold">Currencies: </div>
                                                 <table>
@@ -150,6 +167,7 @@ function Fetch(page){
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            {/* <p className="text-center">{typeof country.name.nativeName !== typeof undefined ? country.name.nativeName.official : null}</p> */}
                                             <div><span className="fw-bold">Region:</span> {country.region}</div>
                                             <div><span className="fw-bold">Sub Region:</span> {country.subregion}</div>
                                             <div><span className="fw-bold">Country Area:</span> {country.area} Km<sup>2</sup> </div>
