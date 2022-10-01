@@ -45,7 +45,6 @@ function Fetch(page){
 
     // Sort onchange on radio button value function
     const sortOnChange = (e) => {
-        console.log(e.target.id === 'asc', e.target.id);
         if(e.target.id === 'asc'){
             setCountries(sortString(countries));
             setSortType(1);
@@ -100,7 +99,7 @@ function Fetch(page){
                                 } } alt={country.name.official}></img>
                                 <div className="card-body">
                                     <p data-bs-target={"#modal-" + i} data-bs-toggle="modal" className="card-title fw-bold text-center">{country.name.official}</p>
-                                    <div className="d-flex justify-content-center align-items-center gap-4">
+                                    <div className="d-flex justify-content-center align-items-center mb-2 gap-4">
                                         <span>CCA2: {country.cca2}</span>
                                         <span>CCA3: {country.cca3}</span>
                                     </div>
@@ -115,13 +114,12 @@ function Fetch(page){
                                         }
                                         </div>
                                     </div>
-                                    <div className="d-flex gap-4">
-                                        <span>Root</span>
+                                    <div className="d-flex gap-3">
+                                        <span style={{width:60}}>Root</span>
                                         <span>{country.idd.root}</span>
                                     </div>
-                                    <div className="d-flex gap-4">
-                                        <div>Suffixes</div>
-                                        {console.log()}
+                                    <div className="d-flex gap-3">
+                                        <div style={{width:60}}>Suffixes</div>
                                         <div className="d-flex gap-2 flex-wrap">{typeof country.idd.suffixes !== typeof undefined ? country.idd.suffixes.map(suffixe => 
                                                 <div> {suffixe} </div>
                                             ) : null}</div>
@@ -136,23 +134,31 @@ function Fetch(page){
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
-                                            <div>
-                                                {/* {
-                                                    Object.entries(country.currencies).forEach(([key, value]) => {
-                                                        <div key={key}>
-                                                            <span>Currency: {key}</span> <span>Name: {value.name}</span> <span>Symbol: {value.symbol}</span>
-                                                        </div>
-                                                    })
-                                                } */}
-                                            </div>
                                             <div><span className="fw-bold">Capital City:</span> {country.capital}</div>
+                                            <div className="d-flex gap-3">
+                                                <div className="fw-bold">Currencies: </div>
+                                                <table>
+                                                    <tbody>
+                                                        {
+                                                            Object.keys(country.currencies).map((key) => 
+                                                                
+                                                                    <tr key={country.currencies[key].name}>
+                                                                        <td>Name: {country.currencies[key].name}</td>
+                                                                        <td style={{paddingLeft:20}}>Symbol: {country.currencies[key]?.symbol}</td>
+                                                                    </tr>
+                                                                
+                                                            )
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             <div><span className="fw-bold">Region:</span> {country.region}</div>
                                             <div><span className="fw-bold">Sub Region:</span> {country.subregion}</div>
                                             <div><span className="fw-bold">Country Area:</span> {country.area} Km<sup>2</sup> </div>
-                                            <div><span className="fw-bold">Google Map:</span> <a href={country.maps?.googleMaps ?? '#'}>{country.maps?.googleMaps ?? ''}</a> </div>
+                                            <div><span className="fw-bold">Google Map:</span> <a target={'_blank'} rel="noopener noreferrer" href={country.maps?.googleMaps ?? '#'}>{country.maps?.googleMaps ?? ''}</a> </div>
                                             <div><span className="fw-bold">Population:</span> {country.population}</div>
                                             <div><span className="fw-bold">Driving len:</span> {country.car?.side}</div>
-                                            <div><span className="fw-bold">Time zone:</span> {country.timezone}</div>
+                                            <div><span className="fw-bold">Time zone:</span> {country.timezones.join(' / ')}</div>
                                             <div><span className="fw-bold">Driving len:</span> {country.continents}</div>
                                             <div><span className="fw-bold">Start of the week:</span> {country.startOfWeek}</div>
                                             <div className="d-flex align-items-center" style={{ paddingRight:100 }}><span className="fw-bold mt-4">Coat of Arms</span> <img className="mx-auto" width={250} height={250} src={country.coatOfArms.png} alt="coat of arms" /></div>

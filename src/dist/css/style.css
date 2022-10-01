@@ -16,3 +16,7 @@
     z-index: 100;
     background-color: white;
 }
+
+.card-body .card-title{
+    cursor: pointer;
+}
