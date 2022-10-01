@@ -9,13 +9,16 @@ function Fetch(page){
     const [currentPage, setCurrentPage] = useState([]);
     const [totalPage, setTotalPage] = useState([]);
     const [limit, setLimit] = useState([25]);
+    const [sortType, setSortType] = useState([0]);
+
+    // Fetch data from an api
     useEffect(()=>{
         fetch(url)
         .then((res) => res.json())
         .then((result) => {
             if(typeof result.status === typeof undefined){
                 // Default sort by ASC
-                setCountries(result);
+                setCountries(sortString(result, sortType));
             }
             result.length > 0 ? setCurrentPage(1) : setCurrentPage(0);
             setTotalPage(Math.ceil(result.length / limit));
@@ -26,27 +29,34 @@ function Fetch(page){
         .catch(console.error)
     }, [url]);
 
+    // Handle on pagination
     const handlePageChange = (e) => {
         setCurrentPage(e.selected + 1);
         document.getElementById("root").scrollIntoView();
     }
 
+    // Sort by Official name
     const sortString = (data, type = 1) => {
+        if(type === 0) return data;
         let sort = [...data];
         sort.sort((f, s) => type * f.name.official.localeCompare(s.name.official));
         return sort;
     }
 
+    // Sort onchange on radio button value function
     const sortOnChange = (e) => {
         console.log(e.target.id === 'asc', e.target.id);
         if(e.target.id === 'asc'){
             setCountries(sortString(countries));
+            setSortType(1);
         }else if(e.target.id === 'desc'){
             setCountries(sortString(countries, -1));
+            setSortType(-1);
         }
         setCurrentPage(1);
     }
 
+    // Search function 
     const search = () => {
         let url = "https://restcountries.com/v3.1/name/";
         let val = document.getElementById('search-country').value;
@@ -59,11 +69,13 @@ function Fetch(page){
     }
 
     let i = 0;
+    // Return value with jsx syntax
     return (
         <div className="container">
             <div>
                 {loading ? <div id="loading-page">
-                loading</div> : null }
+                    <img width={100} height={100} id="loading-img" src={require('./../dist/images/loading.gif')} alt="" />
+                </div> : null }
             </div>
             <div className="row px-4 pt-4 gap-3">
                 <div className="col-12 col-md-4 form-group d-flex gap-2">
@@ -81,7 +93,7 @@ function Fetch(page){
             <div className="row mt-4">
                 {
                     countries.slice((currentPage - 1)* limit, (currentPage * limit)).map(country =>
-                        <div key={i++} className="col-12 col-md-4 mb-3">
+                        <div key={"country-" + i++} className="col-12 col-md-4 mb-3">
                             <div className="card h-100">
                                 <img src={country.flags.png} className="card-img-top" height="200" style={ {
                                     objectFit: "contain"
@@ -116,14 +128,14 @@ function Fetch(page){
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal fade" id={"modal-" + i}>
-                                <div class="modal-dialog" style={{maxWidth: 1000}}>
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">{country.name.official}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div className="modal fade" id={"modal-" + i}>
+                                <div className="modal-dialog" style={{maxWidth: 1000}}>
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title">{country.name.official}</h5>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body">
+                                        <div className="modal-body">
                                             <div>
                                                 {/* {
                                                     Object.entries(country.currencies).forEach(([key, value]) => {
@@ -146,17 +158,13 @@ function Fetch(page){
                                             <div className="d-flex align-items-center" style={{ paddingRight:100 }}><span className="fw-bold mt-4">Coat of Arms</span> <img className="mx-auto" width={250} height={250} src={country.coatOfArms.png} alt="coat of arms" /></div>
 
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        
-
-
                     )
                 }
             </div>

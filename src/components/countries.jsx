@@ -1,9 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
-import Fetch from '../helper/fetch';
+import Fetch from './fetch';
 class Countries extends Component {
     state = { 
-        data: [],
-        loading: true
     }
     render() {
         return (
@@ -12,7 +10,6 @@ class Countries extends Component {
             </div>
         );
     }
-
 }
 
 export default Countries;
