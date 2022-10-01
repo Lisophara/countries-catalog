@@ -91,7 +91,7 @@ function Fetch(page){
             </div>
             <div className="row mt-4">
                 {
-                    countries.slice((currentPage - 1)* limit, (currentPage * limit)).map(country =>
+                    countries ? countries.slice((currentPage - 1)* limit, (currentPage * limit)).map(country =>
                         <div key={"country-" + i++} className="col-12 col-md-4 mb-3">
                             <div className="card h-100">
                                 <img src={country.flags.png} className="card-img-top" height="200" style={ {
@@ -140,14 +140,12 @@ function Fetch(page){
                                                 <table>
                                                     <tbody>
                                                         {
-                                                            Object.keys(country.currencies).map((key) => 
-                                                                
-                                                                    <tr key={country.currencies[key].name}>
-                                                                        <td>Name: {country.currencies[key].name}</td>
-                                                                        <td style={{paddingLeft:20}}>Symbol: {country.currencies[key]?.symbol}</td>
-                                                                    </tr>
-                                                                
-                                                            )
+                                                            country.currencies ? Object.keys(country.currencies).map((key) => 
+                                                                <tr key={country.currencies[key].name}>
+                                                                    <td>Name: {country.currencies[key].name}</td>
+                                                                    <td style={{paddingLeft:20}}>Symbol: {country.currencies[key]?.symbol}</td>
+                                                                </tr>
+                                                            ) : null
                                                         }
                                                     </tbody>
                                                 </table>
@@ -171,7 +169,7 @@ function Fetch(page){
                                 </div>
                             </div>
                         </div>
-                    )
+                    ) : null
                 }
             </div>
             <ReactPaginate
