@@ -32,6 +32,11 @@ function Fetch(page){
         .catch(console.error)
     }, [url]);
 
+    useEffect(() => {
+        setCurrentPage(totalPage.current > currentPage ? currentPage : (totalPage.current > 0 ? totalPage.current : 1));
+        console.log(currentPage);
+    }, [totalPage.current]);
+
     // Handle on pagination
     const handlePageChange = (e) => {
         setCurrentPage(e.selected + 1);
@@ -59,18 +64,12 @@ function Fetch(page){
             setCountries(sortString(countries, -1));
             setSortType(-1);
         }
-        setCurrentPage(1);
     }
 
     // Search function 
     function search(data){
         let result = undefined;
-        result = data.filter(country => {
-            if(country.name.official.toLowerCase().indexOf(searchParam.toString().toLowerCase()) > -1){
-                return country;
-            }
-            return undefined;
-        })
+        result = data.filter(country => country.name.official.toLowerCase().indexOf(searchParam.toString().toLowerCase()) > -1)
         totalPage.current = totalPageSet(result, limit);
         return result;
     }
