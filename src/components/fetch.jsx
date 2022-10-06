@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { render } from "react-dom";
 import ReactPaginate from 'react-paginate';
 
@@ -7,9 +7,11 @@ function Fetch(page){
     const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState([]);
     const [currentPage, setCurrentPage] = useState([]);
-    const [totalPage, setTotalPage] = useState([]);
+    // const [totalPage, setTotalPage] = useState([]);
     const [limit, setLimit] = useState([25]);
     const [sortType, setSortType] = useState([0]);
+    let totalPage = useRef(0);
+    const [searchParam, setSearchParam] = useState([]);
 
     // Fetch data from an api
     useEffect(()=>{
@@ -21,7 +23,8 @@ function Fetch(page){
                 setCountries(sortString(result, sortType));
             }
             result.length > 0 ? setCurrentPage(1) : setCurrentPage(0);
-            setTotalPage(Math.ceil(result.length / limit));
+            // setTotalPage(totalPageSet(result, limit));
+            totalPage.current = totalPageSet(result, limit);
         })
         .then(loading => {
             setLoading(false);
@@ -33,6 +36,10 @@ function Fetch(page){
     const handlePageChange = (e) => {
         setCurrentPage(e.selected + 1);
         document.getElementById("root").scrollIntoView();
+    }
+
+    const totalPageSet = ([...data], limit = 25) =>{
+        return Math.ceil(data.length / limit);
     }
 
     // Sort by Official name
@@ -56,15 +63,16 @@ function Fetch(page){
     }
 
     // Search function 
-    const search = () => {
-        let url = "https://restcountries.com/v3.1/name/";
-        let val = document.getElementById('search-country').value;
-        if(val.trim() !== ''){
-            setUrl(url + val.trim());
-        }else{
-            setUrl('https://restcountries.com/v3.1/all');
-        }
-        setCurrentPage(1);
+    function search(data){
+        let result = undefined;
+        result = data.filter(country => {
+            if(country.name.official.toLowerCase().indexOf(searchParam.toString().toLowerCase()) > -1){
+                return country;
+            }
+            return undefined;
+        })
+        totalPage.current = totalPageSet(result, limit);
+        return result;
     }
 
     let i = 0;
@@ -78,7 +86,7 @@ function Fetch(page){
             </div>
             <div className="row px-4 pt-4 gap-3">
                 <div className="col-12 col-md-4 form-group d-flex gap-2">
-                    <input type="text" onChange={search} className="form-control" id="search-country"/>
+                    <input type="text" onChange={ (e) => {setSearchParam(e.target.value)} } className="form-control" id="search-country"/>
                 </div>
                 <div className="col-12 col-md-4 d-flex gap-5">
                     <div className="d-flex just-content-center align-items-center gap-1">
@@ -86,12 +94,12 @@ function Fetch(page){
                     </div>
                     <div className="d-flex just-content-center align-items-center gap-1">
                         <input type="radio" name="sort" onChange={sortOnChange} value="DESC" id="desc"/> <label htmlFor="desc">DESC</label>
-                    </div>
+                    </div> 
                 </div>
             </div>
             <div className="row mt-4">
                 {
-                    countries ? countries.slice((currentPage - 1)* limit, (currentPage * limit)).map(country =>
+                    search(countries) ? search(countries).slice((currentPage - 1)* limit, (currentPage * limit)).map(country =>
                         <div key={"country-" + i++} className="col-12 col-md-4 mb-3">
                             <div className="card h-100">
                                 <img src={country.flags.png} className="card-img-top" height="200" style={ {
@@ -194,7 +202,7 @@ function Fetch(page){
                 previousLabel={"previous"}
                 nextLabel={"next"}
                 breakLabel={"..."}
-                pageCount={totalPage}
+                pageCount={totalPage.current}
                 forcePage={currentPage - 1}
                 marginPagesDisplayed={2}
                 pageRangeDisplayed={3}
